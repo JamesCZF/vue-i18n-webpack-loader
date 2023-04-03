@@ -1,0 +1,26 @@
+{
+  "name": "vue-i18n-webpack-loader",
+  "version": "0.0.1",
+  "description": "针对vue-i18n处理国际化代码可读性差问题",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JamesCZF/vue-i18n-webpack-loader.git"
+  },
+  "keywords": [
+    "vue-i18n",
+    "webpack-loader"
+  ],
+  "author": "Fu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JamesCZF/vue-i18n-webpack-loader/issues"
+  },
+  "homepage": "https://github.com/JamesCZF/vue-i18n-webpack-loader#readme",
+  "devDependencies": {
+    "loader-utils": "^3.2.1"
+  }
+}
