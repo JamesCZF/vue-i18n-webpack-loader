@@ -17,8 +17,8 @@ module.exports = function (source) {
     //标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
     const tagReg = new RegExp(`(>\\s*)${key}(\\s*</)`, "g")
     //placeholder placeholder="中文" => :placeholder="$t(key)"
-    const palcehodlerReg = new RegExp(`(palcehodler='|")${key}('|")`, "g")
-    newsource = newsource.replace(palcehodlerReg, `$1$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}'$2`)
+    const palcehodlerReg = new RegExp(`(placeholder=")${key}(")`, "g")
+    newsource = newsource.replace(palcehodlerReg, `:$1 $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' $2`)
     newsource = newsource.replace(tagReg, `$1{{ $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' }}$2`)
   })
   return newsource
