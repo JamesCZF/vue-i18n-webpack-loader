@@ -10,7 +10,7 @@ module.exports = function (source) {
   var opts = loaderUtils.getOptions(this) || {}
   const { keyMaps } = opts
   if (!keyMaps) {
-    return
+    return source
   }
   let newsource = source
   Object.keys(keyMaps).forEach(key => {
