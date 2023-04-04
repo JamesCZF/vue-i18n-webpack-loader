@@ -1,9 +1,10 @@
 var loaderUtils = require("loader-utils")
 
-// Vue文件国际化3种情况：
-// 1.标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
-// 2.placeholder placeholder="中文" => :placeholder="$t(key)"
-// 3.script内部 <script> ... 中文  ...</script> => <script> ... this.$t('key')  ...</script>
+// 目前支持Vue文件国际化4种情况：
+// 1.模板标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
+// 2.模板标签上的属性 placeholder,label placeholder="中文" => :placeholder="$t(key)" label="中文" => :label="$t(key)"
+// 3.this.xx = '中文' => this.xx = this.$t('key')
+// 4.表单校验中message中文
 
 module.exports = function (source) {
   var opts = loaderUtils.getOptions(this) || {}
@@ -14,12 +15,25 @@ module.exports = function (source) {
   let newsource = source
   Object.keys(keyMaps).forEach(key => {
     //$t(key) 返回的值是key表明翻译失败 不相等表明翻译成功
-    //标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
+    //1.模板标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
     const tagReg = new RegExp(`(>\\s*)${key}(\\s*</)`, "g")
-    //placeholder placeholder="中文" => :placeholder="$t(key)"
-    const palcehodlerReg = new RegExp(`(placeholder=")${key}(")`, "g")
-    newsource = newsource.replace(palcehodlerReg, `:$1 $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' $2`)
     newsource = newsource.replace(tagReg, `$1{{ $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' }}$2`)
+    //2.模板标签上的属性 placeholder,label placeholder="中文" => :placeholder="$t(key)" label="中文" => :label="$t(key)"
+    const tagPropertyReg = new RegExp(`((placeholder|label)=")${key}.*(")`, "g")
+    newsource = newsource.replace(tagPropertyReg, `:$1 $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' $3`)
+    //3. this.xx = '中文' => this.xx = this.$t('key')
+    // const scriptReg = new RegExp(`(<script[^>]*>[^<]*)${key}+([^<]*<\\/script>)`, "g");
+    const thisReg = new RegExp(`(this.\\w+\\s*=\\s*)"${key}"`, "g")
+    newsource = newsource.replace(
+      thisReg,
+      `$1 \`\${this.$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? this.$t('${keyMaps[key]}') : '${key}'}\``
+    )
+    //4. message:'中文' => message: this.$t('key')
+    const messageReg = new RegExp(`(message:\\s*)"${key}"`, "g")
+    newsource = newsource.replace(
+      messageReg,
+      `$1 \`\${this.$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? this.$t('${keyMaps[key]}') : '${key}'}\``
+    )
   })
   return newsource
 }
