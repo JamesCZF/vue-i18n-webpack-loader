@@ -29,10 +29,10 @@ module.exports = function (source) {
       `$1 \`\${this.$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? this.$t('${keyMaps[key]}') : '${key}'}\``
     )
     //4. message:'中文' => message: this.$t('key')
-    const messageReg = new RegExp(`(message:\\s*)"${key}"`, "g")
+    const messageReg = new RegExp(`(message:\\s*)"${key}"(,\\s*trigger:)`, "g")
     newsource = newsource.replace(
       messageReg,
-      `$1 \`\${this.$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? this.$t('${keyMaps[key]}') : '${key}'}\``
+      `$1 \`\${this.$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? this.$t('${keyMaps[key]}') : '${key}'}\`$2`
     )
   })
   return newsource
