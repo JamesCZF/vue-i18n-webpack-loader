@@ -5,6 +5,7 @@ var loaderUtils = require("loader-utils")
 // 2.模板标签上的属性 placeholder,label placeholder="中文" => :placeholder="$t(key)" label="中文" => :label="$t(key)"
 // 3.this.xx = '中文' => this.xx = this.$t('key')
 // 4.表单校验中message中文
+// 5.computed data属性里面的中文 中文 => this.$t('key')
 
 module.exports = function (source) {
   var opts = loaderUtils.getOptions(this) || {}
@@ -19,7 +20,7 @@ module.exports = function (source) {
     const tagReg = new RegExp(`(>\\s*)${key}(\\s*</)`, "g")
     newsource = newsource.replace(tagReg, `$1{{ $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' }}$2`)
     //2.模板标签上的属性 placeholder,label placeholder="中文" => :placeholder="$t(key)" label="中文" => :label="$t(key)"
-    const tagPropertyReg = new RegExp(`((placeholder|label)=")${key}.*(")`, "g")
+    const tagPropertyReg = new RegExp(`((placeholder|label|enter-button)=")${key}.*(")`, "g")
     newsource = newsource.replace(tagPropertyReg, `:$1 $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' $3`)
     //3. this.xx = '中文' => this.xx = this.$t('key')
     // const scriptReg = new RegExp(`(<script[^>]*>[^<]*)${key}+([^<]*<\\/script>)`, "g");
@@ -33,6 +34,12 @@ module.exports = function (source) {
     newsource = newsource.replace(
       messageReg,
       `$1 \`\${this.$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? this.$t('${keyMaps[key]}') : '${key}'}\`$2`
+    )
+    //5.computed data里面的中文
+    const exportDefaultReg = new RegExp(`((computed:|data\\(\\))\\s*{[^${key}]+)"${key}"`, "g")
+    newsource = newsource.replace(
+      exportDefaultReg,
+      `$1 \`\${this.$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? this.$t('${keyMaps[key]}') : '${key}'}\``
     )
   })
   return newsource
