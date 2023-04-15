@@ -12,9 +12,9 @@ npm i vue-i18n-webpack-loader -D
 目前支持Vue文件国际化5种情况：
 1.模板标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
 2.模板标签上的属性 placeholder,label placeholder="中文" => :placeholder="$t(key)" label="中文" => :label="$t(key)"
-3.this.xx = '中文' => this.xx = this.$t('key')
-4.表单校验中message中文
-5.computed data属性里面的中文 中文 => this.$t('key')
+3.模板内部 {{ 中文}} => {{ $t('key')}}
+4. export default 之内的中文  => this.$t('key)
+5.表单校验中message中文
 ```
 
 ## 使用
@@ -36,7 +36,7 @@ module.exports = {
   chainWebpack: config => {
     config.module
       .rule("vue-file")
-      .test(/\.vue$/)
+      .test(/\.vue|js$/)
       .use("vue-i18n-webpack-loader")
       .loader("vue-i18n-webpack-loader")
       .options({ keyMaps })
@@ -55,6 +55,7 @@ module.exports = {
   :maxLength="6"
 />
 <a-form-model-item label="分类名称"></a-form-model-item>
+<span>{{ isTrue ? '中文'： "中文2"}}</span>
 //表单校验message提示
 rules: {
   name: [
@@ -79,6 +80,7 @@ rules: {
   :placeholder="$t('04-002-002.1.2')"
   :maxLength="6"
 />
+<span>{{ isTrue ? $t('key1')： $t('key2') }}</span>
 <a-form-model-item :label="$t('04-002-002.2.3')"></a-form-model-item>
 //表单校验message提示
 rules: {
