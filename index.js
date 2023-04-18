@@ -17,16 +17,19 @@ module.exports = function (source) {
   Object.keys(keyMaps).forEach(key => {
     //$t(key) 返回的值是key表明翻译失败 不相等表明翻译成功
     //1.模板标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
-    const tagReg = new RegExp(`(/*>\\s*)${key}(\\s*</*)`, "g")
-    newsource = newsource.replace(tagReg, `$1{{ $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}'}}$2`)
+    const tagReg = new RegExp(`(<template>(.|\n|\r)*/*>\\s*)${key}(\\s*</*(.|\n|\r)*</template>)`, "g")
+    newsource = newsource.replace(tagReg, `$1{{ $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}'}}$3`)
     //2.模板标签上的属性 placeholder,label placeholder="中文" => :placeholder="$t(key)" label="中文" => :label="$t(key)"
     const tagPropertyReg = new RegExp(
-      `((placeholder|label|enter-button|title|cancelText|cancel-text|okText|ok-text)=")${key}:*\\s*(")`,
+      `(<template>(.|\n|\r)*)((placeholder|label|enter-button|title|cancelText|cancel-text|okText|ok-text)=")${key}:*\\s*("(.|\n|\r)*</template>)`,
       "g"
     )
-    newsource = newsource.replace(tagPropertyReg, `:$1 $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' $3`)
+    newsource = newsource.replace(
+      tagPropertyReg,
+      `$1 :$3 $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' $5`
+    )
     //3. export default 之内的中文
-    const exportDefaultReg = new RegExp(`(export\\s*default\\s*{(.|\n|\r)*(?=(data\\s*\\(\\))|computed)(.|\n|\r)*)"${key}"`, "g")
+    const exportDefaultReg = new RegExp(`(export\\s*default\\s*{(.|\n|\r)*(?=(data\\s*\\(\\))|computed)((?!<style).|\n|\r)*)"${key}"`, "g")
     while (newsource.match(exportDefaultReg)) {
       //一个文件中可能存在多个相同的中文 所以用了while语句
       newsource = newsource.replace(
