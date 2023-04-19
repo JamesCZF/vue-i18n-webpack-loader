@@ -2,7 +2,7 @@ var loaderUtils = require("loader-utils")
 
 // 目前支持Vue文件国际化5种情况：
 // 1.模板标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
-// 2.模板标签上的属性 placeholder,label placeholder="中文" => :placeholder="$t(key)" label="中文" => :label="$t(key)"
+// 2.模板标签上的属性中文 如placeholder="中文"  => :placeholder="$t(key)"
 // 3. export default 之内的中文  => this.$t('key)
 // 4. 表单校验rules message:'中文' => message: this.$t('key')
 // 5. 模板内部 {{ 中文}} => {{ $t('key')}}
@@ -21,12 +21,12 @@ module.exports = function (source) {
     while (newsource.match(tagReg)) {
       newsource = newsource.replace(tagReg, `$1{{ $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}'}}$3`)
     }
-    //2.模板标签上的属性 placeholder,label placeholder="中文" => :placeholder="$t(key)" label="中文" => :label="$t(key)"
-    const tagPropertyReg = new RegExp(
-      `((placeholder|label|enter-button|title|cancelText|cancel-text|okText|ok-text|empty-text|text)=")${key}:*\\s*(")`,
-      "g"
+    //2.模板标签上的属性中文 如placeholder="中文"  => :placeholder="$t(key)"
+    const tagPropertyReg = new RegExp(`(<template>(.|\n|\r)*)\\s+([a-zA-Z\\-]+)="${key}:*\\s*("(.|\n|\r)*</template>)`, "g")
+    newsource = newsource.replace(
+      tagPropertyReg,
+      `$1 :$3=" $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' $4`
     )
-    newsource = newsource.replace(tagPropertyReg, `:$1 $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' $3`)
     //3. export default 之内的中文
     const exportDefaultReg = new RegExp(`(export\\s*default\\s*{(.|\n|\r)*(?=(data\\s*\\(\\))|computed)((?!<style).|\n|\r)*)"${key}"`, "g")
     while (newsource.match(exportDefaultReg)) {

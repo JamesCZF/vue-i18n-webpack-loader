@@ -11,7 +11,7 @@ npm i vue-i18n-webpack-loader -D
 ```bash
 目前支持Vue文件国际化5种情况：
 1.模板标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
-2.模板标签上的属性 placeholder|label|enter-button|title|cancelText|cancel-text|okText|ok-text="中文" => :xxx="$t(key)"
+2.模板标签上的属性中文 xxx="中文" => :xxx="$t(key)"
 3.模板内部 {{ 中文}} => {{ $t('key')}}
 4. export default 之内的中文  => this.$t('key)
 5.表单校验中message中文
