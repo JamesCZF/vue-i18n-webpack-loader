@@ -32,16 +32,25 @@ npm i vue-i18n-webpack-loader -D
   "分类名称": "04-002-002.2.3"
 }
 
+//使用国际化loader会导致项目编译时间大大加长，使用cache-loader之后，可以大大减少再次编译的时间
 module.exports = {
-  chainWebpack: config => {
-    config.module
-      .rule("vue-file")
-      .test(/\.vue|js$/)
-      .use("vue-i18n-webpack-loader")
-      .loader("vue-i18n-webpack-loader")
-      .options({ keyMaps })
-      .end();
-  },
+  module: {
+      rules: [
+        {
+          test: /\.(vue|js)$/,
+          use: [
+            "cache-loader",
+            {
+              loader: "vue-i18n-webpack-loader",
+              options: {
+                keyMaps
+              }
+            }
+          ],
+          include: path.resolve("src")
+        }
+      ]
+    }
 };
 ```
 ## 示例
