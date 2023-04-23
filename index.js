@@ -8,7 +8,7 @@ var loaderUtils = require("loader-utils")
 // 5. 模板内部 {{ 中文}} => {{ $t('key')}}
 
 module.exports = function (source) {
-  var opts = loaderUtils.getOptions(this) || {}
+  const opts = loaderUtils.getOptions(this) || {}
   const { keyMaps } = opts
   if (!keyMaps) {
     return source
@@ -17,7 +17,7 @@ module.exports = function (source) {
   Object.keys(keyMaps).forEach(key => {
     //$t(key) 返回的值是key表明翻译失败 不相等表明翻译成功
     //1.模板标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
-    const tagReg = new RegExp(`(<template>(.|\n|\r)*/*>\\s*)${key}((.?(\\{\\{.+\\}\\})?)\\s*</*(.|\n|\r)*</template>)`, "g")
+    const tagReg = new RegExp(`(<template>(.|\n|\r)*/*>\\s*)${key}(((:|：)?(\\{\\{.+\\}\\})?)\\s*</*(.|\n|\r)*</template>)`, "g")
     while (newsource.match(tagReg)) {
       newsource = newsource.replace(tagReg, `$1{{ $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}'}}$3`)
     }
