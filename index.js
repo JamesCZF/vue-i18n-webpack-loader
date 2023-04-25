@@ -4,8 +4,7 @@ var loaderUtils = require("loader-utils")
 // 1.模板标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
 // 2.模板标签上的属性中文 如placeholder="中文"  => :placeholder="$t(key)"
 // 3. export default 之内的中文  => this.$t('key)
-// 4. 表单校验rules message:'中文' => message: this.$t('key')
-// 5. 模板内部 {{ 中文}} => {{ $t('key')}}
+// 4. 模板内部 {{ 中文}} => {{ $t('key')}}
 
 module.exports = function (source) {
   const opts = loaderUtils.getOptions(this) || {}
@@ -39,13 +38,7 @@ module.exports = function (source) {
         `$1  this.$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? this.$t('${keyMaps[key]}') : '${key}'`
       )
     }
-    //4. 表单校验rules message:'中文' => message: this.$t('key')
-    const messageReg = new RegExp(`(message:\\s*)"${key}"(,\\s*trigger:)`, "g")
-    newsource = newsource.replace(
-      messageReg,
-      `$1 \`\${this.$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? this.$t('${keyMaps[key]}') : '${key}'}\`$2`
-    )
-    //5. 模板内部 {{ 中文}} => {{ $t('key')}}
+    //4. 模板内部 {{ 中文}} => {{ $t('key')}}
     const templateBracketReg = new RegExp(`(<template>(.|\n|\r)*\\{\\{(.|\n|\r)*)"${key}"((.|\n|\r)*\\}\\}(.|\n|\r)*</template>)`, "g")
     newsource = newsource.replace(templateBracketReg, `$1 $t('${keyMaps[key]}')$4`)
   })

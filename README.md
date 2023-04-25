@@ -7,14 +7,12 @@
 ```bash
 npm i vue-i18n-webpack-loader -D
 ```
-## 目前支持vue中的5种情况
+## 目前支持vue中的4种情况
 ```bash
-目前支持Vue文件国际化5种情况：
 1.模板标签内部： <tag> 中文 </tag> => 中文=> {{$t('key')}}
 2.模板标签上的属性中文 xxx="中文" => :xxx="$t(key)"
 3.模板内部 {{ 中文}} => {{ $t('key')}}
 4. export default 之内的中文  => this.$t('key)
-5.表单校验中message中文
 ```
 
 ## 使用
@@ -32,7 +30,7 @@ npm i vue-i18n-webpack-loader -D
   "分类名称": "04-002-002.2.3"
 }
 
-//使用国际化loader会导致项目编译时间大大加长，使用cache-loader之后，可以大大减少再次编译的时间
+//使用国际化loader会导致项目编译时间大大加长，使用cache-loader之后，可以减少再次编译的时间
 module.exports = {
   module: {
       rules: [
