@@ -35,7 +35,7 @@ module.exports = function (source) {
       //一个文件中可能存在多个相同的中文 所以用了while语句
       newsource = newsource.replace(
         exportDefaultReg,
-        `$1  this.$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? this.$t('${keyMaps[key]}') : '${key}'`
+        `$1  (this.$t('${keyMaps[key]}') !== '${keyMaps[key]}' ? this.$t('${keyMaps[key]}') : '${key}')`
       )
     }
     //4. 模板内部 {{ 中文}} => {{ $t('key')}}
