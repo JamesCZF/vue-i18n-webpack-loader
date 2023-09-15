@@ -40,7 +40,10 @@ module.exports = function (source) {
     }
     //4. 模板内部 {{ 中文}} => {{ $t('key')}}
     const templateBracketReg = new RegExp(`(<template>(.|\n|\r)*\\{\\{(.|\n|\r)*)"${key}"((.|\n|\r)*\\}\\}(.|\n|\r)*</template>)`, "g")
-    newsource = newsource.replace(templateBracketReg, `$1 $t('${keyMaps[key]}')$4`)
+    newsource = newsource.replace(
+      templateBracketReg,
+      `$1 $t('${keyMaps[key]}') !== '${keyMaps[key]}' ? $t('${keyMaps[key]}') : '${key}' $4`
+    )
   })
   return newsource
 }
